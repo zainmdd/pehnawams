@@ -3,26 +3,32 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Gift } from "lucide-react";
-import WaitlistForm from "../WaitlistForm";// ✅ added
+import WaitlistForm from "../WaitlistForm"; // ✅ added
 
 export default function Marketing() {
   const router = useRouter();
 
   const [navOption, setNavOption] = useState([
-    { name: "Register as Partner", isActive: false, link: "https://partners.pehnawa.app/" },
+    {
+      name: "Register as Partner",
+      isActive: false,
+      link: "https://partners.pehnawa.app/",
+    },
     { name: "Get Early Access", isActive: false, link: "/user" },
     { name: "Contact us", isActive: false, link: "/contact" },
   ]);
 
- const [activeModal, setActiveModal] = useState(null);
+  const [activeModal, setActiveModal] = useState(null);
   const openModal = (type) => setActiveModal(type);
   const closeModal = () => setActiveModal(null);
 
   const handleNav = (item) => {
     setNavOption((prev) =>
       prev.map((nav) =>
-        nav.name === item.name ? { ...nav, isActive: true } : { ...nav, isActive: false }
-      )
+        nav.name === item.name
+          ? { ...nav, isActive: true }
+          : { ...nav, isActive: false },
+      ),
     );
 
     if (item.link && item.link !== "#") {
@@ -33,55 +39,54 @@ export default function Marketing() {
   return (
     <div className="font-sans overflow-x-hidden w-full max-w-screen min-h-[100dvh]">
       {/* -------------------- HERO -------------------- */}
-          <div className="relative min-h-screen w-full flex flex-col items-center justify-center overflow-hidden">
-  <img
-    src="/trail3.png"
-    alt="Hero Background"
-    className="absolute inset-0 w-full h-full object-cover object-center -z-10 select-none"
-  />
-
-
-        {/* Hero Button */}
-        <button
-          onClick={() => router.push("/user")}
-          className="-mt-60 px-3 py-2 text-sm font-['raleway'] font-bold sm:text-xl bg-black text-white rounded-lg shadow-md hover:bg-gray-800 transition-all duration-200"
-        >
-          Get Early Access
-        </button>
-
+      <section
+        className="relative w-full h-[100dvh] overflow-hidden
+             bg-center bg-no-repeat bg-cover flex items-center justify-center"
+        style={{
+          backgroundImage: "url('/iPhone_16_Pro_Max_9.png')",
+        }}
+      >
         {/* Navbar */}
-        <div className="absolute top-5 left-0 right-0 flex items-center justify-center z-20  px-2">
+        <div className="absolute top-5 left-0 right-0 flex items-center justify-center z-20 px-2">
           <div className="bg-white/30 backdrop-blur-sm p-1 flex rounded-xl text-black shadow-md">
             {navOption.map((item) => (
               <p
                 key={item.name}
                 onClick={() => handleNav(item)}
                 className={`px-3 py-1 rounded-lg cursor-pointer transition 
-                text-[10px] font-inter sm:text-xs md:text-sm lg:text-base 
-                ${item.isActive ? "bg-white font-bold shadow" : "hover:bg-white/50"}`}
+          text-[10px] font-inter sm:text-xs md:text-sm lg:text-base 
+          ${item.isActive ? "bg-white font-bold shadow" : "hover:bg-white/50"}`}
               >
                 {item.name}
               </p>
             ))}
           </div>
         </div>
-      </div>
+
+        {/* CTA */}
+        <button
+          onClick={() => router.push("/user")}
+          className="z-10 px-3 py-2 text-sm sm:text-xl
+               bg-black text-white rounded-lg shadow-md"
+        >
+          Get Early Access
+        </button>
+      </section>
 
       {/* -------------------- SECTION -------------------- */}
-       
-  
 
       {/* -------------------- FEATURES -------------------- */}
-    <div className="flex justify-center mt--60 sm:mt-10 md:mt-40">
-        
-  <img
-   onClick={() => router.push("/user")}
-    className="w-full max-w-5xl object-contain mx-auto"
-    src="./withbgtxt.png"
-    alt="Get early access"
-  />
-    </div>
-  
+      <section className="relative bg-white py-20">
+        <div className="flex justify-center">
+          <img
+            src="/withbgtxt.png"
+            alt="Get early access"
+            onClick={() => router.push("/user")}
+            className="w-full max-w-5xl object-contain mx-auto cursor-pointer"
+          />
+        </div>
+      </section>
+
       {/* -------------------- ACCESS + FOOTER + MODALS -------------------- */}
       <div className="bg-black text-white relative pt-10">
         {/* Early Access */}
@@ -97,7 +102,11 @@ export default function Marketing() {
             Early Access Benefits
           </div>
           <div className="flex justify-center">
-            <img src="./nobg.png" alt="Early Access Benefits" className="w-[90%] md:w-[70%] object-contain" />
+            <img
+              src="./nobg.png"
+              alt="Early Access Benefits"
+              className="w-[90%] md:w-[70%] object-contain"
+            />
           </div>
         </div>
 
@@ -110,7 +119,9 @@ export default function Marketing() {
             </p>
             <img
               onClick={() =>
-                router.push("https://www.instagram.com/pehnawa.app?igsh=MW1wN2F0enE3dDQycg%3D%3D&utm_source=qr")
+                router.push(
+                  "https://www.instagram.com/pehnawa.app?igsh=MW1wN2F0enE3dDQycg%3D%3D&utm_source=qr",
+                )
               }
               className="h-28 md:h-40 mt-4 cursor-pointer"
               src="./instalogo.png"
@@ -129,13 +140,22 @@ export default function Marketing() {
         {/* COPYRIGHT + LINKS */}
         <div className="bg-black py-6 flex flex-col items-center gap-3">
           <div className="flex gap-6 text-sm font-semibold justify-center mt-3 text-white font-montserrat">
-            <button onClick={() => openModal("terms")} className="hover:underline">
+            <button
+              onClick={() => openModal("terms")}
+              className="hover:underline"
+            >
               Terms & Conditions
             </button>
-            <button onClick={() => openModal("privacy")} className="hover:underline">
+            <button
+              onClick={() => openModal("privacy")}
+              className="hover:underline"
+            >
               Privacy Policy
             </button>
-            <button onClick={() => openModal("contact")} className="hover:underline">
+            <button
+              onClick={() => openModal("contact")}
+              className="hover:underline"
+            >
               Contact Us
             </button>
           </div>
@@ -147,18 +167,26 @@ export default function Marketing() {
         {/* -------------------- MODALS -------------------- */}
         {activeModal && (
           <div className="fixed inset-0 flex items-center justify-center z-50">
-            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={closeModal}></div>
+            <div
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+              onClick={closeModal}
+            ></div>
             <div className="relative bg-white rounded-2xl shadow-lg max-w-3xl w-full p-6 z-50 overflow-y-auto max-h-[90vh] font-montserrat">
-              <button onClick={closeModal} className="absolute top-3 right-3 text-gray-500 hover:text-black text-xl">
+              <button
+                onClick={closeModal}
+                className="absolute top-3 right-3 text-gray-500 hover:text-black text-xl"
+              >
                 ✖
               </button>
 
               {/* ---------- TERMS & CONDITIONS ---------- */}
               {activeModal === "terms" && (
                 <div>
-                  <h2 className="text-2xl font-bold text-[#1A1A1A] mb-4">Terms & Conditions</h2>
+                  <h2 className="text-2xl font-bold text-[#1A1A1A] mb-4">
+                    Terms & Conditions
+                  </h2>
                   <div className="text-[15px] text-[#4B4B4B] leading-relaxed whitespace-pre-line overflow-y-auto max-h-[70vh] pr-2">
-{`Last Updated: 4 October 2025
+                    {`Last Updated: 4 October 2025
 
 Welcome to Pehnawa. These Terms & Conditions ("Terms") explain how you may use the 
 Pehnawa platform (website, mobile apps and related services) whether you are shopping, 
@@ -268,13 +296,14 @@ By using Pehnawa, you acknowledge that you have read, understood, and agree to b
                 </div>
               )}
 
-
               {/* ---------- PRIVACY POLICY ---------- */}
               {activeModal === "privacy" && (
                 <div>
-                  <h2 className="text-2xl font-bold text-[#1A1A1A] mb-4">Privacy Policy</h2>
+                  <h2 className="text-2xl font-bold text-[#1A1A1A] mb-4">
+                    Privacy Policy
+                  </h2>
                   <div className="text-[15px] text-[#4B4B4B] leading-relaxed whitespace-pre-line overflow-y-auto max-h-[70vh] pr-2">
-{`Last Updated: 4 October 2025
+                    {`Last Updated: 4 October 2025
 
 At Pehnawa (“we,” “our,” or “us”), your privacy is not just a legal checkbox — it’s a core value. 
 We believe that trust is the foundation of fashion and commerce.
@@ -326,13 +355,14 @@ For questions, contact our Privacy Officer at admin@pehnawa.app`}
                 </div>
               )}
 
-
               {/* ---------- CONTACT US ---------- */}
               {activeModal === "contact" && (
                 <div>
-                  <h2 className="text-2xl font-bold text-[#1A1A1A] mb-4">Contact Us</h2>
+                  <h2 className="text-2xl font-bold text-[#1A1A1A] mb-4">
+                    Contact Us
+                  </h2>
                   <p className="text-[15px] text-[#4B4B4B] leading-relaxed font-montserrat">
-{`Need Assistance? We're Here to Help!
+                    {`Need Assistance? We're Here to Help!
 
 Whether you have an issue with an order, a question about our products, or general feedback — our team is ready to assist.
 
@@ -348,7 +378,6 @@ Bengaluru, Karnataka, India
 Mon – Fri | 10:00 AM – 6:00 PM (IST)
 
 We’re happy to hear from you anytime.`}
-
                   </p>
                 </div>
               )}
