@@ -160,7 +160,7 @@ export default function Marketing() {
             </button>
           </div>
           <p className="text-xs text-white font-montserrat text-center mt-3">
-            © 2025 Pehnawa.app All rights reserved.
+            © 2026 Pehnawa.app All rights reserved.
           </p>
         </div>
 
