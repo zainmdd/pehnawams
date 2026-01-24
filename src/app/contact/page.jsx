@@ -18,7 +18,7 @@ We aim to respond to all inquiries within 24–48 hours.
 Email us at founder@pehnawa.app
 
 Pehnawa Headquarters
-Bengaluru, Karnataka, India
+Hyderabad, Telangana, India
 Mon – Fri | 10:00 AM – 6:00 PM (IST)
 
 We’re happy to hear from you anytime.`}

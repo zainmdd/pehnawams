@@ -2,17 +2,16 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Gift } from "lucide-react";
-import WaitlistForm from "../WaitlistForm"; // ✅ added
+import WaitlistForm from "../WaitlistForm";
 
 export default function Marketing() {
   const router = useRouter();
 
   const [navOption, setNavOption] = useState([
     {
-      name: "Register as Partner",
+      name: "Home",
       isActive: false,
-      link: "https://partners.pehnawa.app/",
+      link: "https://pehnawa.app/",
     },
     { name: "Get Early Access", isActive: false, link: "/user" },
     { name: "Contact us", isActive: false, link: "/contact" },
@@ -37,68 +36,89 @@ export default function Marketing() {
   };
 
   return (
-    <div className="font-sans overflow-x-hidden w-full max-w-screen min-h-[100dvh]">
+    <div className="font-sans overflow-x-hidden w-full max-w-screen">
       {/* -------------------- HERO -------------------- */}
-      <section
-        className="relative w-full h-[100dvh] overflow-hidden
-             bg-center bg-no-repeat bg-cover flex items-center justify-center"
-        style={{
-          backgroundImage: "url('/iPhone_16_Pro_Max_9.png')",
-        }}
-      >
-        {/* Navbar */}
-        <div className="absolute top-5 left-0 right-0 flex items-center justify-center z-20 px-2">
-          <div className="bg-white/30 backdrop-blur-sm p-1 flex rounded-xl text-black shadow-md">
-            {navOption.map((item) => (
-              <p
-                key={item.name}
-                onClick={() => handleNav(item)}
-                className={`px-3 py-1 rounded-lg cursor-pointer transition 
-          text-[10px] font-inter sm:text-xs md:text-sm lg:text-base 
-          ${item.isActive ? "bg-white font-bold shadow" : "hover:bg-white/50"}`}
-              >
-                {item.name}
-              </p>
-            ))}
-          </div>
+      <section className="relative w-full min-h-screen overflow-hidden">
+        {/* Background Image with responsive sources */}
+        <div className="absolute inset-0 w-full h-full">
+          <picture>
+            {/* For large screens (desktop) */}
+            <source media="(min-width: 1024px)" srcSet="/hero-desktop.png" />
+            {/* For medium screens (tablet) */}
+            <source
+              media="(min-width: 768px)"
+              srcSet="/iPhone_16_Pro_Max_9.png"
+            />
+            {/* Default/mobile image */}
+            <img
+              src="/iPhone_16_Pro_Max_9.png"
+              alt="Hero Background"
+              className="w-full h-full"
+              style={{ objectFit: "fill" }}
+            />
+          </picture>
         </div>
 
-        {/* CTA */}
-        <button
-          onClick={() => router.push("/user")}
-          className="z-10 px-3 py-2 text-sm sm:text-xl
-               bg-black text-white rounded-lg shadow-md"
-        >
-          Get Early Access
-        </button>
-      </section>
+        {/* Content Container */}
+        <div className="relative w-full h-screen flex flex-col items-center justify-center">
+          {/* Navbar */}
+          <div className="absolute top-5 left-0 right-0 flex items-center justify-center z-20 px-2">
+            <div className="bg-white/30 backdrop-blur-sm p-1 flex rounded-xl text-black shadow-md">
+              {navOption.map((item) => (
+                <p
+                  key={item.name}
+                  onClick={() => handleNav(item)}
+                  className={`px-3 py-1 rounded-lg cursor-pointer transition 
+                    text-[10px] font-inter sm:text-xs md:text-sm lg:text-base 
+                    ${
+                      item.isActive
+                        ? "bg-white font-bold shadow"
+                        : "hover:bg-white/50"
+                    }`}
+                >
+                  {item.name}
+                </p>
+              ))}
+            </div>
+          </div>
 
-      {/* -------------------- SECTION -------------------- */}
+          {/* CTA Button - Centered */}
+          <button
+            onClick={() => router.push("/user")}
+            className="z-10 px-3 py-2 text-sm sm:text-xl
+                     bg-black text-white rounded-lg shadow-md hover:bg-gray-800 transition-colors"
+          >
+            Get Early Access
+          </button>
+        </div>
+      </section>
 
       {/* -------------------- FEATURES -------------------- */}
-      <section className="relative bg-white py-20">
-        <div className="flex justify-center">
-          <img
-            src="/withbgtxt.png"
-            alt="Get early access"
-            onClick={() => router.push("/user")}
-            className="w-full max-w-5xl object-contain mx-auto cursor-pointer"
-          />
-        </div>
-      </section>
+      <div className="relative bg-white">
+        <section className="relative py-10 md:py-20">
+          <div className="flex justify-center">
+            <img
+              src="/withbgtxt.png"
+              alt="Get early access"
+              onClick={() => router.push("/user")}
+              className="w-full max-w-5xl object-contain mx-auto cursor-pointer"
+            />
+          </div>
+        </section>
+      </div>
 
       {/* -------------------- ACCESS + FOOTER + MODALS -------------------- */}
-      <div className="bg-black text-white relative pt-10">
+      <div className="bg-black text-white relative">
         {/* Early Access */}
         <img
           onClick={() => router.push("/user")}
-          className="mx-auto -mt-10 relative z-10"
+          className="mx-auto -mt-8 md:-mt-10 relative z-10 cursor-pointer"
           src="./getaccess.png"
           alt="Get Access"
         />
 
-        <div className="text-center mt-10">
-          <div className="text-2xl md:text-4xl font-['Plus_Jakarta_Sans'] font-bold mb-6 px-2">
+        <div className="text-center mt-10 px-4">
+          <div className="text-2xl md:text-4xl font-['Plus_Jakarta_Sans'] font-bold mb-6">
             Early Access Benefits
           </div>
           <div className="flex justify-center">
@@ -111,7 +131,7 @@ export default function Marketing() {
         </div>
 
         {/* FOOTER */}
-        <div className="bg-white rounded-t-2xl text-black mt-20 px-6 py-10 flex flex-col lg:flex-row items-center justify-between gap-10">
+        <div className="bg-white rounded-t-2xl text-black mt-10 md:mt-20 px-6 py-10 flex flex-col lg:flex-row items-center justify-between gap-10">
           {/* Instagram */}
           <div className="flex flex-col items-center lg:flex-[2]">
             <p className="uppercase font-inter font-medium text-lg text-center">
@@ -132,8 +152,7 @@ export default function Marketing() {
             </p>
           </div>
 
-          {/* Form */}
-          {/* ✅ Waitlist Form imported here */}
+          {/* Waitlist Form */}
           <WaitlistForm />
         </div>
 
@@ -255,7 +274,7 @@ availability and seller fulfilment.
 • Delivery timelines depend on location, product type and shipping partner.
 
 10. Returns, Exchanges & Refunds 
-• Pehnawa’s returns policy (available on the Platform) sets the standard return window. 
+• Pehnawa's returns policy (available on the Platform) sets the standard return window. 
 • Sellers must accept returns; Pehnawa may handle return logistics and refunds on behalf 
 of Sellers.
 
@@ -279,7 +298,7 @@ fulfilment.
 
 15. Disputes, Liability & Indemnity 
 • Each party indemnifies the other against losses arising from its breach of these Terms. 
-• Pehnawa’s liability is limited to the extent permitted by law.
+• Pehnawa's liability is limited to the extent permitted by law.
 
 16. Governing Law & Dispute Resolution 
 These Terms are governed by the laws of India. Disputes not resolved in 30 days may be referred to arbitration.
@@ -288,7 +307,7 @@ These Terms are governed by the laws of India. Disputes not resolved in 30 days 
 Grievance Officer: Mohammed 
 Email: support@pehnawa.app
 Phone: +91 9398550513 
-Working hours: Mon–Fri, 10:00 AM – 6:00 PM IST 
+Working hours: Mon-Fri, 10:00 AM - 6:00 PM IST 
 General support: support@pehnawa.app | partners@pehnawa.app
 
 By using Pehnawa, you acknowledge that you have read, understood, and agree to be bound by these Terms and Conditions.`}
@@ -305,7 +324,7 @@ By using Pehnawa, you acknowledge that you have read, understood, and agree to b
                   <div className="text-[15px] text-[#4B4B4B] leading-relaxed whitespace-pre-line overflow-y-auto max-h-[70vh] pr-2">
                     {`Last Updated: 4 October 2025
 
-At Pehnawa (“we,” “our,” or “us”), your privacy is not just a legal checkbox — it’s a core value. 
+At Pehnawa ("we," "our," or "us"), your privacy is not just a legal checkbox - it's a core value. 
 We believe that trust is the foundation of fashion and commerce.
 
 1. Who We Are
@@ -364,20 +383,20 @@ For questions, contact our Privacy Officer at admin@pehnawa.app`}
                   <p className="text-[15px] text-[#4B4B4B] leading-relaxed font-montserrat">
                     {`Need Assistance? We're Here to Help!
 
-Whether you have an issue with an order, a question about our products, or general feedback — our team is ready to assist.
+Whether you have an issue with an order, a question about our products, or general feedback - our team is ready to assist.
 
 📩 For Support, Orders, or Payments:
 Email us at support@pehnawa.app
-We aim to respond to all inquiries within 24–48 hours.
+We aim to respond to all inquiries within 24-48 hours.
 
 💬 For Suggestions or Collaboration:
 Email us at founder@pehnawa.app
 
 Pehnawa Headquarters
-Bengaluru, Karnataka, India
-Mon – Fri | 10:00 AM – 6:00 PM (IST)
+Hyderabad, Telangana, India
+Mon - Fri | 10:00 AM - 6:00 PM (IST)
 
-We’re happy to hear from you anytime.`}
+We're happy to hear from you anytime.`}
                   </p>
                 </div>
               )}
