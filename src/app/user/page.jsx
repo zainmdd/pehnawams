@@ -1,9 +1,10 @@
-"use client"; 
+"use client";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 
 export default function Page() {
-  const [count, setCount] = useState(163);
+  const [count, setCount] = useState(0);
+  const [countLoading, setCountLoading] = useState(true);
   const [formData, setFormData] = useState({
     name: "",
     city: "",
@@ -11,57 +12,81 @@ export default function Page() {
     email: "",
   });
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
 
+  // Fetch count from API on mount
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem("users") || "[]");
-    setCount(163 + stored.length);
+    async function fetchCount() {
+      try {
+        const res = await fetch("/api/sheet");
+        const data = await res.json();
+        if (data.success) {
+          setCount(data.count);
+        }
+      } catch (err) {
+        console.error("Error fetching count:", err);
+      } finally {
+        setCountLoading(false);
+      }
+    }
+    fetchCount();
   }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    setError("");
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
 
-    if (!formData.name || !formData.city || !formData.phone || !formData.email) {
+    if (
+      !formData.name ||
+      !formData.city ||
+      !formData.phone ||
+      !formData.email
+    ) {
       setError("⚠️ Please fill in all fields");
+      setLoading(false);
       return;
     }
 
     if (!/^\d{10}$/.test(formData.phone)) {
       setError("⚠️ Phone number must be 10 digits");
+      setLoading(false);
       return;
     }
 
-    if (!/^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(formData.email)) {
-      setError("⚠️ Email must be a valid Gmail address");
-      return;
+    try {
+      const response = await fetch("/api/sheet", {
+        method: "POST",
+        body: JSON.stringify(formData),
+        headers: { "Content-Type": "application/json" },
+      });
+
+      const data = await response.json();
+
+      if (data.status === "exists") {
+        setError(data.message || "⚠️ You're already registered!");
+      } else if (data.status === "success") {
+        setSuccess(true);
+        setFormData({ name: "", city: "", phone: "", email: "" });
+        setCount(data.count || count + 1);
+
+        // Reset success message after 3 seconds
+        setTimeout(() => setSuccess(false), 3000);
+      } else {
+        setError(data.message || "Something went wrong. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      setError("Network error. Please try again.");
+    } finally {
+      setLoading(false);
     }
-
-    // Check duplicates
-    const stored = JSON.parse(localStorage.getItem("users") || "[]");
-    const phoneExists = stored.find((user) => user.phone === formData.phone);
-    const emailExists = stored.find((user) => user.email === formData.email);
-
-    if (phoneExists && emailExists) {
-      setError("⚠️ This phone number and email are already registered");
-      return;
-    } else if (phoneExists) {
-      setError("⚠️ This phone number is already registered");
-      return;
-    } else if (emailExists) {
-      setError("⚠️ This email is already registered");
-      return;
-    }
-
-    // --- Save new user ---
-    stored.push({ ...formData, date: new Date().toISOString() });
-    localStorage.setItem("users", JSON.stringify(stored));
-
-    setCount(163 + stored.length);
-    setFormData({ name: "", city: "", phone: "", email: "" });
   };
 
   return (
@@ -80,6 +105,12 @@ export default function Page() {
         <h1 className="text-2xl font-bold text-center mb-6">
           Get early access
         </h1>
+
+        {success && (
+          <div className="mb-4 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded text-sm">
+            ✅ Successfully added to the waitlist!
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <input
@@ -110,7 +141,7 @@ export default function Page() {
           <input
             type="email"
             name="email"
-            placeholder="Email "
+            placeholder="Email"
             value={formData.email}
             onChange={handleChange}
             className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-black focus:ring-1 focus:ring-black"
@@ -121,15 +152,24 @@ export default function Page() {
 
           {/* Count Text */}
           <p className="text-sm font-medium text-black text-left">
-            {count}+ have already joined the waitlist.
+            {countLoading
+              ? "Fetching waitlist count..."
+              : `${count}+ have already joined the waitlist.`}
           </p>
 
           {/* Button */}
           <button
             type="submit"
-            className="bg-black text-white px-6 py-2 rounded-lg shadow-md hover:bg-gray-800 transition self-start"
+            disabled={loading}
+            className={`
+              ${success ? "bg-green-700 hover:bg-green-800" : "bg-black hover:bg-gray-800"}
+              text-white px-6 py-2 rounded-lg shadow-md w-fit
+              disabled:opacity-70
+              transition-colors
+              self-start
+            `}
           >
-            Join now
+            {loading ? "Submitting..." : success ? "Submitted ✅" : "Join now"}
           </button>
         </form>
       </div>

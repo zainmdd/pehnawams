@@ -14,16 +14,23 @@ export default function WaitlistForm() {
   const [success, setSuccess] = useState(false);
   const [count, setCount] = useState(null);
   const [countLoading, setCountLoading] = useState(true);
+  const [globalError, setGlobalError] = useState("");
 
-  // 🔹 Fetch live waitlist count on mount
+  // Fetch live waitlist count on mount
   useEffect(() => {
     async function fetchCount() {
       try {
-        const res = await fetch("/api/sheet", { cache: "no-store" });
+        const res = await fetch("/api/sheet");
         const data = await res.json();
-        if (data.count !== undefined) setCount(data.count);
+        if (data.success && data.count !== undefined) {
+          setCount(data.count);
+        } else {
+          console.error("Failed to fetch count:", data.error);
+          setCount(0);
+        }
       } catch (err) {
-        console.error("❌ Error fetching waitlist count:", err);
+        console.error("Error fetching waitlist count:", err);
+        setCount(0);
       } finally {
         setCountLoading(false);
       }
@@ -39,6 +46,7 @@ export default function WaitlistForm() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    setGlobalError(""); // Clear global error on change
 
     if (name === "phone")
       setErrors((prev) => ({ ...prev, phone: validatePhone(value) }));
@@ -48,6 +56,7 @@ export default function WaitlistForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setGlobalError("");
 
     const phoneError = validatePhone(formData.phone);
     const emailError = validateEmail(formData.email);
@@ -66,21 +75,26 @@ export default function WaitlistForm() {
       const data = await response.json();
 
       if (data.status === "exists") {
-        alert("⚠️ You’re already on the waitlist!");
+        setGlobalError(data.message || "⚠️ You're already on the waitlist!");
       } else if (data.status === "success") {
         setSuccess(true);
         setFormData({ name: "", city: "", phone: "", email: "" });
 
-        // Refresh waitlist count
-        const updated = await fetch("/api/sheet", { cache: "no-store" });
-        const newData = await updated.json();
-        if (newData.count) setCount(newData.count);
-      } else {
-        alert("Something went wrong. Please try again.");
+        // Update count after successful submission
+        setCount(data.count || count + 1);
+
+        // Reset success message after 3 seconds
+        setTimeout(() => setSuccess(false), 3000);
+      } else if (data.status === "error") {
+        setGlobalError(
+          data.message || "Something went wrong. Please try again.",
+        );
       }
     } catch (error) {
       console.error("Error submitting form:", error);
-      alert("Error submitting form.");
+      setGlobalError(
+        "Network error. Please check your connection and try again.",
+      );
     } finally {
       setLoading(false);
     }
@@ -94,6 +108,20 @@ export default function WaitlistForm() {
       <p className="font-Dm Sans font-bold text-2xl text-left">
         Get early access
       </p>
+
+      {/* Global Error Message */}
+      {globalError && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded text-sm">
+          {globalError}
+        </div>
+      )}
+
+      {/* Success Message */}
+      {success && (
+        <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded text-sm">
+          ✅ Successfully added to the waitlist!
+        </div>
+      )}
 
       <input
         name="name"
@@ -136,23 +164,27 @@ export default function WaitlistForm() {
       />
       {errors.email && <p className="text-red-500 text-xs">{errors.email}</p>}
 
-      {/* 🔹 Live Waitlist Count ABOVE Join Now button */}
+      {/* Live Waitlist Count */}
       <p className="text-sm text-gray-700 mt-1 text-left">
         {countLoading
-          ? "Loading waitlist count..."
-          : count
-          ? `${count}+ users have already joined the waitlist.`
-          : "Be the first to join the waitlist!"}
+          ? "Fetching waitlist count..."
+          : count !== null
+            ? `${count}+ users have already joined the waitlist.`
+            : "Be the first to join the waitlist!"}
       </p>
 
       <button
         type="submit"
         disabled={loading}
-        className="bg-black text-white py-3 px-6 rounded-lg shadow-md w-fit text-left disabled:opacity-70"
+        className={`
+    ${success ? "bg-green-700 hover:bg-green-800" : "bg-black hover:bg-gray-800"}
+    text-white py-3 px-6 rounded-lg shadow-md w-fit text-left
+    disabled:opacity-70
+    transition-colors
+  `}
       >
         {loading ? "Submitting..." : success ? "Submitted ✅" : "Join now"}
       </button>
     </form>
   );
 }
-
