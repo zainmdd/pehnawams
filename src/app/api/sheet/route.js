@@ -127,8 +127,10 @@ export async function POST(request) {
 // Helper function to initialize Google Sheets
 async function getGoogleSheetDoc() {
   const serviceAccountEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
-  const privateKey = process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, "\n");
+  const base64Key = process.env.GOOGLE_PRIVATE_KEY_BASE64;
   const sheetId = process.env.GOOGLE_SHEET_ID;
+
+  const privateKey = Buffer.from(base64Key, "base64").toString("utf-8");
 
   const auth = new JWT({
     email: serviceAccountEmail,
